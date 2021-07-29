@@ -16,3 +16,4 @@
   tags: init
 - import_tasks: validator_run.yml
   become: true
+  tags: run
