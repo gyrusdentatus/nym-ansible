@@ -1,3 +1,18 @@
 ---
-- debug:
-    msg: "hello cosmos"
+- import_tasks: install.yml
+  become: true
+  tags: download
+- import_tasks: gaiad_0420_start.yml
+  become: true
+  become_method: su
+  become_user: gaia
+  become_flags: '-s /bin/sh'
+  tags: fresh_node
+- import_tasks: gaiad_0502_init.yml
+  become: true
+  become_method: su
+  become_user: gaia
+  become_flags: '-s /bin/sh'  
+  tags: init
+- import_tasks: validator_run.yml
+  become: true

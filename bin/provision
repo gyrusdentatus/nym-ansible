@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-ANSIBLE_CONFIG=config/ansible.cfg \
-ansible-playbook playbooks/provision.yml "$@"
+ANSIBLE_CONFIG=./config/ansible.cfg \
+ansible-playbook ./playbooks/provision.yml "$@"

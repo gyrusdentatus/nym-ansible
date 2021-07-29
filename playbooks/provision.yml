@@ -4,5 +4,21 @@
   gather_facts: yes
   become: yes
   roles:
-    - log
+    #- log
     - cosmos
+#  tasks:
+#  - name: fetch gaiad-v4.2.0 release notes 
+#    get_url:
+#      url: https://github.com/cosmos/gaia/releases/download/v4.2.0/build_report
+#      dest: /tmp/checksums
+#  - name: parse the release notes for checksums
+#    shell: grep linux-amd64 /tmp/checksums | sed '/^$/d' | sed -r 's/gaiad-v4.2.0-linux-amd64//g' | tail -n 1
+#    register: checksum
+#  - name: fetch gaiad-v4.2.0 binaries from github to /tmp/
+#    get_url:
+#      url: https://github.com/cosmos/gaia/releases/download/v4.2.0/gaiad-v4.2.0-linux-amd64
+#      dest: /usr/local/bin/
+#      owner: gaia
+#      group: gaia
+#      mode: u+rwx
+#      checksum: "sha256: {{ checksum.stdout }}"
