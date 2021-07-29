@@ -1,0 +1,10 @@
+---
+# defaults file for cosmos
+_gaia_validator_system_group: "gaia"
+_gaia_validator_system_user: "{{ _gaia_validator_system_group }}"
+GAIA_HOME: "/home/gaia/"
+gaiad_version: "v5.0.2"
+gaiad_v4.2.0_sha256: "5687a0ff28141552b82bc25f4c785bafb4932139012c55451937be9b4564f5ae"
+gaiad_v5.0.2_sha256: "b528aff8b9e76c91b76b1288cdc15d13fed6b868d8ff3b74460ea2061bacea9b"
+admin_password: "turn.on.tune.in.drop.out"
+moniker: "gyrusdentatus"
