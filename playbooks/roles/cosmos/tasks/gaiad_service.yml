@@ -1,0 +1,27 @@
+---
+- name: install service script
+  copy:
+    src: templates/gaiad.service.j2
+    dest: /etc/systemd/system/gaiad.service
+    owner: root
+    group: root
+    mode: u+rwx
+  tags: service_install
+- name: enable gaiad.service
+  systemd:
+    name: gaiad
+    enabled: true
+  tags: service_install
+- name: reload gaiad.service
+  systemd:
+    name: gaiad
+    daemon_reload: true
+  tags: service_install
+- name: start gaiad
+  systemd:
+    name: gaiad
+    state: started
+  tags: gaiad_restart
+- name: Write down the address and mnemonic
+  debug:
+    msg: "SAVE YOUR MNEMONIC: {{ admin_mnemonic.stdout_lines }}"
