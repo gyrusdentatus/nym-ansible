@@ -1,0 +1,41 @@
+---
+- name: Init gaiad #-v4.2.0-linux-amd64
+  command: "{{ gaiad_binary_location|quote }} init {{ moniker|quote }}"
+  args:
+    creates: "{{ GAIA_HOME }}/.gaia"
+  # skipping errors now for the ease of testing ... 
+  ignore_errors: yes
+  tags: fresh_node 
+- name: check genesis file exists
+  stat:
+    path: "{{ GAIA_HOME }}/.gaia/config/genesis.json"
+    get_checksum: yes
+  register: c
+  tags: genesis_download
+- name: print genesis checksum to stdout
+  debug: 
+    msg: "{{ c.stat.checksum }}"
+  tags: genesis_download
+- name: Download genesis archive
+  get_url:
+    url: https://github.com/cosmos/mainnet/raw/master/genesis.cosmoshub-4.json.gz
+    dest: "{{ GAIA_HOME }}/.gaia/config/genesis.json.gz"
+    mode: '0440'
+  tags: genesis_download
+  when: c.stat.checksum != genesis_sha1
+- name: unzip genesis file to .gaia/config
+  command: "gzip -df {{ GAIA_HOME }}/.gaia/config/genesis.json.gz"
+    #dest: "{{ GAIA_HOME }}/.gaia/config/genesis.json
+  args:
+    creates: genesis.json
+  tags: genesis_download
+  when: c.stat.checksum != genesis_sha1
+  #ignore_errors: yes
+- name: change ownership of genesis to gaia:gaia 
+  file:  
+    path: "{{ GAIA_HOME }}/.gaia/config/genesis.json"
+    mode: '0644'
+    owner: gaia
+    group: gaia
+  tags: genesis_download
+  when: c.stat.checksum != genesis_sha1 
