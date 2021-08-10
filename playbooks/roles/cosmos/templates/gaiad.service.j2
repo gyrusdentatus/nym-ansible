@@ -8,10 +8,8 @@ Description=gaiad (5.0.2)
 User=gaia
 Type=simple
 # PIDFile=/run/my-service.pid
-ExecStart=/usr/local/bin/gaiad start
-# ExecReload=/home/transang/startup.sh reload
-# ExecStop=/home/transang/startup.sh stop
-# TimeoutSec=30
+ExecStart=/usr/local/bin/gaiad start --x-crisis-skip-assert-invariants 
+
 Restart=on-failure
 RestartSec=30
 StartLimitInterval=350
