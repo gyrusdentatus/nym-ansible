@@ -1,0 +1,14 @@
+---
+- name: Populate service facts
+  ansible.builtin.service_facts:
+  register: services_state
+  tags: service_check
+  become: true
+  become_user: root
+- debug: var=services_state.ansible_facts.services["gaiad.service"].state
+- name: Print service facts
+  ansible.builtin.debug:
+    var: services_state.ansible_facts.services['gaiad.service']
+  become: true
+  become_user: root
+  tags: service_check
