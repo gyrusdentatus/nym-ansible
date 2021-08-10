@@ -1,0 +1,59 @@
+---
+#- name: Init gaiad-v5.0.2-linux-amd64
+#  command: ""{{ gaiad_binary_location }}"-v5.0.2-linux-amd64 init gyrusdentatus"
+#  args:
+#    creates: /home/gaia/.gaia
+#- name: Download and unzip genesis file to .gaia/config
+#  ansible.builtin.unarchive:
+#    src: https://github.com/cosmos/mainnet/raw/master/genesis.cosmoshub-4.json.gz
+#    dest: /home/gaia/.gaia/config/genesis.json
+#    mode: '0440'
+#    remote_src: yes
+#- name: start syncing until error - ERR UPGRADE "Gravity-DEX" (PANIC)
+#  command: gaiad start gaiad start --x-crisis-skip-assert-invariants --p2p.seeds bf8328b66dceb4987e5cd94430af66045e59899f@public-seed.cosmos.vitwit.com:26656,cfd785a4224c7940e9a10f6c1ab24c343e923bec@164.68.107.188:26656,d72b3011ed46d783e369fdf8ae2055b99a1e5074@173.249.50.25:26656,ba3bacc714817218562f743178228f23678b2873@public-seed-node.cosmoshub.certus.one:26656,3c7cad4154967a294b3ba1cc752e40e8779640ad@84.201.128.115:26656
+- name: add minimum gas prices config to app configuration file
+  replace:
+    path: /home/gaia/.gaia/config/app.toml
+    regexp: 'minimum-gas-prices = ""'
+    replace: 'minimum-gas-prices = "{{ min_gas_prices }}"'
+  tags: config_edit
+- name: don't create empty blocks, wait for transactions
+  replace:
+    path: /home/gaia/.gaia/config/config.toml
+    regexp: 'create_empty_blocks = true'
+    replace: 'create_empty_blocks = false'
+  tags: config_edit
+- name: add p2p-seeds
+  replace:
+    path: /home/gaia/.gaia/config/config.toml
+    regexp: 'seeds = ""'
+    replace: 'seeds = "{{ p2p_seeds }}"'
+  tags: config_edit
+#
+#- name: add admin user
+#  expect:
+#    command: "{{ gaiad_binary_location|quote }}/lol keys add admin"
+#    responses:
+#      'Enter keyring passphrase:': "{{ admin_password }}"
+#      'Re-enter keyring passphrase:': "{{ admin_password }}"
+#  register: admin_mnemonic
+- name: add admin user
+  expect:
+    command: "{{ gaiad_binary_location|quote }} keys add admin"
+    responses:
+      'Enter keyring passphrase:': "{{ admin_password }}"
+      'Re-enter keyring passphrase:': "{{ admin_password }}"
+  register: admin_mnemonic
+  ignore_errors: yes 
+  tags: fresh_node, create_admin
+
+- name: get admin account address
+  expect:
+    echo: true
+    command: "{{ gaiad_binary_location }} keys show admin -a"
+    responses:
+      'Enter keyring passphrase:': "{{ admin_password }}"
+  register: admin_address
+  tags: show_admin
+#- name: validate the genesis file
+#  command: ""{{ gaiad_binary_location }}" validate-genesis"
