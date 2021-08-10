@@ -1,0 +1,28 @@
+---
+- name: copy gaiad-height.py to /usr/local/lib/ 
+  ansible.builtin.copy:
+    src: files/gaiad-height.py
+    dest: "{{ gaia_log_path }}/gaiad-height.py"
+    owner: gaia
+    group: gaia
+    mode: '0755'
+- name: install service script
+  copy:
+    src: templates/gaia-log.service.j2
+    dest: /etc/systemd/system/gaia-log.service
+    owner: root
+    group: root
+    mode: u+rwx
+- name: enable gaia-log.service
+  systemd:
+    name: gaiad
+    enabled: true
+- name: reload gaia-log.service
+  systemd:
+    name: gaia-log
+    daemon_reload: true
+- name: start gaia-log.service
+  systemd:
+    name: gaia-log
+    state: started
+  tags: logging_restart
