@@ -13,7 +13,7 @@ gaiad_v5.0.2_sha256: "b528aff8b9e76c91b76b1288cdc15d13fed6b868d8ff3b74460ea2061b
 genesis_sha1: "116e4bc367e758d14cba9283414961d89a3ba163"
 
 # [config]
-admin_password: "turn.on.tune.in.drop.out"
+admin_password: "rockyou2021"
 moniker: "gyrusdentatus"
 
 min_gas_prices: "0.025uatom"
