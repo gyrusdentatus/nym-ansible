@@ -1,0 +1,37 @@
+---
+- name: Install gcc
+  ansible.builtin.package:
+    name: gcc
+    state: present
+- name: remove old go < 1.17
+  file: 
+    path: /usr/local/go
+    state: absent
+  #failed_when: stdout.stdout = 'go version go1.17 linux/amd64'
+- name: Fetch Go and unpack it to /usr/local/go
+  ansible.builtin.unarchive:
+    src: https://golang.org/dl/go1.17.linux-amd64.tar.gz
+    dest: /usr/local/
+    remote_src: yes
+  tags:
+    - go_download
+  #failed_when: stdout.stdout = 'go version go1.17 linux/amd64'
+- name: Add env variables to include Go
+  blockinfile:
+    path: "~/.bashrc"
+    block: |
+      export GOROOT=/usr/local/go
+      export GOPATH=$HOME/go
+      export GO111MODULE=on
+      export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
+    backup: yes
+  tags:
+    - go_add_path
+- name: source .bashrc
+  shell: source $HOME/.bashrc
+  args:
+    executable: /bin/bash
+- name: try this
+  shell: "ldd /tmp/nymd | grep libwasmvm.so | awk '{ print $3 }'"
+  register: ldd
+- debug: var=ldd.stdout_lines
