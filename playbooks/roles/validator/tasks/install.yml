@@ -34,7 +34,7 @@
   shell: grep linux-amd64 /tmp/checksums_v0.11.0 | sed '/^$/d' | sed -r 's/nymd-v0.11.0-linux-amd64//g' | tail -n 1
   register: checksum
   tags: checksums
-- name: fetch nymd-v0.11.0 binaries from github to /usr/local/bin
+- name: fetch nymd-v0.11.0 binaries from github to /home/nym
   get_url:
     url: https://github.com/gyrusdentatus/nym-ansible/releases/download/0.11.0/nymd
     dest: "/tmp/nymd"
@@ -49,7 +49,7 @@
   retries: 5
   delay: 2
   check_mode: false
-- name: copy the binaries from the uncompressed directory to /usr/local/bin ...
+- name: copy the binaries from /tmp  to /home/nym ...
   copy:
     src: /tmp/nymd
     dest: /home/nym/nymd
