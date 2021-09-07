@@ -1,12 +1,12 @@
-# Cosmos Hub(4) mainnet Ansible role
+# Nym validator v0.11.0 Ansible role
 
-This repo includes Ansible role that deploys the full Cosmos hub 4 mainnet node. It fetches the binaries from Cosmos Github repo instead of compiling it locally or remotely on the target server. 
+This repo includes Ansible role that deploys the full Nym validator node for testnet Milhon v0.11.0. It fetches the binaries from nymtech/nym Github repo instead of compiling it locally or remotely on the target server. 
 
 However, it also checks the sha256 hashes of the binaries and also sha1 of the genesis.json file for an extra security reasons. 
 
-All variables can be found in `roles/cosmos/defaults/defaults.yml` including the checksums(which I kept there just for testing purposes, they are being fetched with `get_url` module instead directly from the [Cosmos mainnet repo](https://github.com/cosmos/mainnet)) 
+All variables can be found in `roles/validator/defaults/defaults.yml` including the checksums(which I kept there just for testing purposes, they are being fetched with `get_url` module instead directly from the [Nym repo](https://github.com/nymtech/nym)) 
 
-The Cosmos role follows the [Quickstart](https://github.com/cosmos/mainnet#quickstart) from Cosmos README.md, where for a fresh node it is **first needed** to run the *gaiad-v4.2.0* and **wait until** it **PANICs** and then **swap** the **binaries** for *gaiad-v5.0.2*. 
+The Nym validator role follows the [validator docs](https://nymtech.net/docs/run-nym-nodes/validators/) 
 Rest of the instructions from the README.md are also followed - for example the changes in `config.toml`.
 
 Make sure you change the **moniker** and **password** in `defaults.yml`.
@@ -15,7 +15,7 @@ For this role to work properly, you should use `--tags` and `--skip-tags` simply
 
 You may find the tags with some brief description in the next section.
 
-**NOTE:** This role does extensive checks so it would not overwrite any of your critical files, including the binary swapping - which does not proceed if the process is still running but nevertheless I am not responsible for any damage done to your node. 
+**NOTE:** This role does extensive checks so it would not overwrite any of your critical files but as always, use with caution.
 
 ## Using this role (complete deployment of Cosmos mainnet hub 4 node)
 
@@ -46,8 +46,6 @@ You can find the main tags in `tasks/main.yml` but here is also a brief descript
 ```
 download: needed to download binaries and checksums as well as creating gaia user and group. 
   additional tags for download:
-    bin_swap - moves the v5.0.2 binaries from /tmp to /usr/local/bin
-    binaries - same as the bin_swap (but used in the tasks/main.yml)
     checksums - parses the release notes for checksums 
 fresh_node:
   full init, adding admin user account, using moniker and password from default.yml file,  config edits and p2p seeds, genesis file downlaod. 
@@ -61,9 +59,10 @@ init: edits config and adds admin user
     
 run: installs systemd service script and starts gaiad
 service_check: checks if systemd gaiad.service works
-logging: installs the python monitoring script and runs it as a systemd service
+logging: installs the python monitoring script (disabled currently, was used for *gaiad* with *StatsD*) and runs it as a systemd service
 ```
 ## Basic monitoring script to get the latest_block_height
+**NOTE:** *right now not functional yet and turned off but if you're using StatsD server, you can change the tasks/main.yml and allow it*
 Simple monitoring script in Python that retrieves the latest block height from local json-rcp endpoint (pst, [check this out](https://docs.tendermint.com/master/rpc/)) and reports it as a gauge to the local StatsD server (UDP 8125) every 10 seconds. 
 
 For it to work in the current state of the repo, you will need to have StatsD server on the machine preinstalled or you can uncomment the task from the `tasks/main.yml` or you can use `--skip-tags "logging"` 
