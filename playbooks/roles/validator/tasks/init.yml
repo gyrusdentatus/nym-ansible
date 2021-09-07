@@ -1,0 +1,33 @@
+---
+- name: Init nymd #-v0.1.0-linux-amd64
+  command: "{{ nymd_binary_location|quote }} init {{ moniker|quote }} --chain-id {{ chain_id|quote }}"
+  args:
+    creates: "{{ nym_HOME }}/.nymd"
+  # skipping errors now for the ease of testing ... 
+  ignore_errors: yes
+  tags: fresh_node 
+- name: check genesis file exists
+  stat:
+    path: "{{ nym_HOME }}/.nymd/config/genesis.json"
+    get_checksum: yes
+  register: c
+  tags: genesis_download
+- name: print genesis checksum to stdout
+  debug: 
+    msg: "{{ c.stat.checksum }}"
+  tags: genesis_download
+- name: Download genesis archive
+  get_url:
+    url: https://nymtech.net/testnets/milhon/genesis.json
+    dest: "{{ nym_HOME }}/.nymd/config/genesis.json"
+    mode: '0440'
+  tags: genesis_download
+  when: c.stat.checksum != genesis_sha1
+- name: change ownership of genesis to nym:nym 
+  file:  
+    path: "{{ nym_HOME }}/.nymd/config/genesis.json"
+    mode: '0644'
+    owner: nym
+    group: nym
+  tags: genesis_download
+  when: c.stat.checksum != genesis_sha1 

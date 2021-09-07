@@ -2,5 +2,5 @@
 - name: Log
   lineinfile:
     create: yes
-    path: /home/figment/log.txt
+    path: /tmp/nym-ansible-log.txt
     line: "{{ ansible_date_time.iso8601 }}"

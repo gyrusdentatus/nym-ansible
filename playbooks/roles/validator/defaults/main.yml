@@ -1,0 +1,43 @@
+---
+# change as needed or preffered
+_nym_validator_system_group: "nym"
+_nym_validator_system_user: "{{ _nym_validator_system_group }}"
+
+nym_HOME: "/home/nym"
+nym_version: "v0.11.0"
+nymd_binary_location: "/home/nym/nymd"
+
+# checksums
+nym_v0.1.0_sha256: "53cd0edd98e01587880a9acc20c2f2e8ae251c19628f3424e179ae0d34f17a92"
+#nym_v5.0.2_sha256: "b528aff8b9e76c91b76b1288cdc15d13fed6b868d8ff3b74460ea2061bacea9b"
+genesis_sha1: "0b670307aec056fb0f2d383aec1462046d1cd955"
+
+# [config]
+admin_password: "rockyou1337"
+moniker: "jude-milhon"
+min_gas_prices: "0.0025upunk"
+p2p_seeds: "d6265e7c885eda002ef8736d2270bcbfb346a3aa@testnet-milhon-validator1.nymtech.net:26656"
+
+#[generic]
+bech32_prefix: punk
+chain_id: testnet-milhon
+#nym_version: hotfix/ipv6-monitor-testing
+mixnet_contract: punk10pyejy66429refv3g35g2t7am0was7yalwrzen
+validator_url: 'http://testnet-milhon-validator1.nymtech.net:1317,http://testnet-milhon-validator2.nymtech.net:1317' # note http and 1317 port!
+local_checkout_dir: /tmp/nym
+certbot_package: "python3-certbot-nginx"
+certbot_plugin: "nginx"
+certbot_mail_address: hans@nymtech.net
+#validator:
+#  admin_password: 1337.lite?
+#  validator_binary_location: /home/nym/nymd
+#  wasmdcommit: e4ab8aae2918055704a14c0676068f3b72035905
+#  wasmdversion: v0.17.0  
+#  contract_upload: /home/nym/mixnet_contracts.wasm
+#  validator_api_upload: /home/nym/nym-validator-api
+#  code_id: 1 # defaults to 1 as if all goes well you won't have to upload multiple contracts. 
+#             # you can find the different codeID(s) here: http://<VALIDATOR_DOMAIN>.nymtech.net:1317/wasm/code 
+#  init_msg: {}
+#  validator_api_v4_file: support-files/topology/milhon-v4-topology.json  
+#  validator_api_v6_file: support-files/topology/milhon-v6-topology.json
+#  persistent_peers: # if you need more than one validator fill this value with address of genesis validator once deployed 

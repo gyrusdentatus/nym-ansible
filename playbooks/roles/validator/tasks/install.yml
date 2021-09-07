@@ -1,0 +1,75 @@
+- name: Show facts available on the system
+  ansible.builtin.debug:
+    var: ansible_facts
+    
+- name: Create the nym group
+  group:
+    name: "{{ _nym_validator_system_group }}"
+    state: present
+    system: true
+  when: _nym_validator_system_group != "root"
+
+- name: Create the nym user
+  user:
+    name: "{{ _nym_validator_system_user }}"
+    group: "{{ _nym_validator_system_group }}"
+    shell: /usr/sbin/nologin
+    create_home: true
+    home: /home/nym
+  when: _nym_validator_system_user != "root"
+
+
+#- name: create nymd data directory
+#  file:
+#    path: "{{ nym_HOME }}/nym"
+#    state: directory
+#    owner: nym
+#    group: nym
+#    mode: 0744
+- name: fetch nymd-v0.11.0 release notes to get checksums
+  get_url:
+    url: https://github.com/gyrusdentatus/nym-ansible/releases/download/0.11.0/SHA256SUMS-v0.11.0.txt #https://github.com/cosmos/nym/releases/download/v0.1.0/build_report
+    dest: /tmp/checksums_v0.11.0
+- name: parse the release notes for checksums
+  shell: grep linux-amd64 /tmp/checksums_v0.11.0 | sed '/^$/d' | sed -r 's/nymd-v0.11.0-linux-amd64//g' | tail -n 1
+  register: checksum
+  tags: checksums
+- name: fetch nymd-v0.11.0 binaries from github to /usr/local/bin
+  get_url:
+    url: https://github.com/gyrusdentatus/nym-ansible/releases/download/0.11.0/nymd
+    dest: "/tmp/nymd"
+    owner: nym
+    group: nym
+    mode: u+rwx
+    checksum: "sha256: {{ checksum.stdout }}"
+  #failed_when: checksum = "b528aff8b9e76c91b76b1288cdc15d13fed6b868d8ff3b74460ea2061bacea9b"
+  register: _download_binary
+  until: _download_binary is succeeded
+  retries: 5
+  delay: 2
+  check_mode: false
+- name: copy the binaries from the uncompressed directory to /usr/local/bin ...
+  copy:
+    src: /tmp/nymd
+    dest: /home/nym/nymd
+    owner: nym
+    group: nym
+    mode: u+rwx
+    remote_src: yes
+- name: get libwasmvm.so path to copy it later
+  shell: "ldd /tmp/nymd | grep libwasmvm.so | awk '{ print $3 }'"
+  register: ldd
+- debug: var=ldd.stdout_lines
+  #msg: ldd.stdout
+- name: copy the libwasmvm.so libraries to /home/nym
+  copy:
+    src: "{{ ldd.stdout }}"
+    dest: /home/nym/
+    owner: nym
+    group: nym
+    mode: u+rw
+    remote_src: yes
+- name: add ld_library_path variable to bashrc
+  lineinfile:
+    path: /home/nym/.bashrc
+    line: export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/nym/nymd

@@ -1,0 +1,29 @@
+---
+- import_tasks: install.yml
+  #become: true
+  tags: download
+- import_tasks: init.yml
+  become: true
+  #become_method: sudo
+  become_user: nym
+  #become_flags: '-u nym /bin/bash'
+  tags: fresh_node
+- import_tasks: config.yml
+  become: true
+  #become_method: sudo
+  become_user: nym
+  #become_flags: '-u nym /bin/sh'  
+  tags: init
+- import_tasks: nymd_service.yml
+  #become: true
+  tags: run
+- import_tasks: service_check.yml
+  #become: true 
+  tags: service_check 
+#- import_tasks: copy_binaries.yml
+#  become: true 
+#  become_user: root
+#  tags: bin_swap
+#- import_tasks: logging.yml
+#  become: true
+#  tags: logging
