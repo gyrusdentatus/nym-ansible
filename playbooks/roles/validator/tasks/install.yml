@@ -42,6 +42,7 @@
     group: nym
     mode: u+rwx
     checksum: "sha256: {{ checksum.stdout }}"
+
   #failed_when: checksum = "b528aff8b9e76c91b76b1288cdc15d13fed6b868d8ff3b74460ea2061bacea9b"
   register: _download_binary
   until: _download_binary is succeeded
@@ -56,6 +57,19 @@
     group: nym
     mode: u+rwx
     remote_src: yes
+- name: clone wasmd on remote
+  #delegate_to: 127.0.0.1
+  git:
+    repo: 'https://github.com/cosmwasm/wasmd.git'
+    dest: /tmp/wasmd
+    version: "{{ wasmdversion }}"
+- name: compile wasmd on remote
+  #delegate_to: 127.0.0.1
+  command: /usr/local/go/bin/go build -o /tmp/nymd -mod=readonly -tags "netgo,ledger" -ldflags "-X github.com/cosmos/cosmos-sdk/version.Name=nymd -X github.com/cosmos/cosmos-sdk/version.AppName=nymd -X github.com/CosmWasm/wasmd/app.NodeDir=.nymd -X github.com/cosmos/cosmos-sdk/version.Version={{ wasmdversion }} -X github.com/cosmos/cosmos-sdk/version.Commit={{ wasmdcommit}} -X github.com/CosmWasm/wasmd/app.Bech32Prefix={{ bech32_prefix }} -X 'github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger'" -trimpath ./cmd/wasmd # noqa line-length
+  args:
+    chdir: /tmp/wasmd/
+    creates: /tmp/nymd
+  tags: build
 - name: get libwasmvm.so path to copy it later
   shell: "ldd /tmp/nymd | grep libwasmvm.so | awk '{ print $3 }'"
   register: ldd

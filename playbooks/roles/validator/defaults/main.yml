@@ -31,8 +31,8 @@ certbot_mail_address: hans@nymtech.net
 #validator:
 #  admin_password: 1337.lite?
 #  validator_binary_location: /home/nym/nymd
-#  wasmdcommit: e4ab8aae2918055704a14c0676068f3b72035905
-#  wasmdversion: v0.17.0  
+wasmdcommit: e4ab8aae2918055704a14c0676068f3b72035905
+wasmdversion: v0.17.0  
 #  contract_upload: /home/nym/mixnet_contracts.wasm
 #  validator_api_upload: /home/nym/nym-validator-api
 #  code_id: 1 # defaults to 1 as if all goes well you won't have to upload multiple contracts. 

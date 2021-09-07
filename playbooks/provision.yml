@@ -5,7 +5,7 @@
   become: yes
   roles:
     - log
-    - go
+    - go_install
     - validator
   environment: 
     LD_LIBRARY_PATH: /home/nym/
