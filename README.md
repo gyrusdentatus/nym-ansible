@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Nym validator v0.11.0 Ansible role
 
 This repo includes Ansible role that deploys the full Nym validator node for testnet Milhon v0.11.0. It fetches the binaries from nymtech/nym Github repo instead of compiling it locally or remotely on the target server. 
@@ -66,3 +67,6 @@ logging: installs the python monitoring script (disabled currently, was used for
 Simple monitoring script in Python that retrieves the latest block height from local json-rcp endpoint (pst, [check this out](https://docs.tendermint.com/master/rpc/)) and reports it as a gauge to the local StatsD server (UDP 8125) every 10 seconds. 
 
 For it to work in the current state of the repo, you will need to have StatsD server on the machine preinstalled or you can uncomment the task from the `tasks/main.yml` or you can use `--skip-tags "logging"` 
+=======
+# nym-ansible
+>>>>>>> 673ea167215865a386749873566a5553206fefd1
